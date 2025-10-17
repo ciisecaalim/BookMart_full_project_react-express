@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import SidenavList from "./sideNavList";
 import axios from "axios";
 
 function Sidebar() {
-  const [isOpen, setIsOpen] = useState(true); // default 18% width
+  const [isOpen, setIsOpen] = useState(true);
   const [admin, setAdmin] = useState({ name: "", email: "", role: "", avatar: "" });
+  const [img, setImg] = useState("/avatar.png");
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const handleToggle = () => setIsOpen(!isOpen);
 
   const handleLogOut = () => {
-    localStorage.removeItem("adminToken");
     localStorage.removeItem("adminData");
     window.location.href = "/loginDash";
   };
@@ -26,45 +27,56 @@ function Sidebar() {
     { to: "/dash/settings", icon: "fa-cog", title: "Settings" },
   ];
 
-  useEffect(() => {
-    const token = localStorage.getItem("adminToken");
+  const fetchAdmin = async () => {
     const storedAdmin = localStorage.getItem("adminData");
-
     if (storedAdmin) {
-      setAdmin(JSON.parse(storedAdmin));
-    } else if (token) {
-      axios
-        .get("/api/admin/profile", { headers: { Authorization: `Bearer ${token}` } })
-        .then((res) => {
-          setAdmin(res.data);
-          localStorage.setItem("adminData", JSON.stringify(res.data));
-        })
-        .catch((err) => console.error(err));
+      const parsedAdmin = JSON.parse(storedAdmin);
+      setAdmin(parsedAdmin);
+      setImg(parsedAdmin.avatar ? `http://localhost:3000${parsedAdmin.avatar}?t=${Date.now()}` : "/avatar.png");
+    } else {
+      // Optional: fetch from API if localStorage empty
+      try {
+        const res = await axios.get("http://localhost:3000/api/admin/profile/public");
+        setAdmin(res.data);
+        setImg(res.data.avatar ? `http://localhost:3000${res.data.avatar}?t=${Date.now()}` : "/avatar.png");
+      } catch (err) {
+        console.error("Failed to fetch admin:", err);
+      }
     }
+  };
+
+  useEffect(() => {
+    fetchAdmin();
+    const handleUpdate = () => fetchAdmin();
+    window.addEventListener("adminDataUpdated", handleUpdate);
+    return () => window.removeEventListener("adminDataUpdated", handleUpdate);
   }, []);
 
   return (
     <div className="flex min-h-screen">
-      {/* SIDEBAR */}
       <div
         className={`fixed top-0 left-0 bottom-0 bg-purple-700 shadow-lg transition-all duration-300 flex flex-col`}
         style={{ width: isOpen ? "18%" : "6%" }}
       >
         {/* Admin Info */}
-        <div className="flex items-center gap-3 p-4 border-b border-purple-600">
+        <div className="flex items-center gap-3 p-4 border-b border-purple-600 overflow-hidden relative">
+          {!imgLoaded && (
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
           <img
-            src={admin.avatar || "/avatar.png"}
+            src={img}
             alt="Admin"
-            className={`w-10 h-10 rounded-full transition-all duration-300 ${
-              isOpen ? "mr-2" : "mx-auto"
-            }`}
+            onLoad={() => setImgLoaded(true)}
+            className="w-10 h-10 rounded-full object-cover transition-all duration-500 transform hover:scale-110"
           />
           {isOpen && (
-            <div>
-              <h4 className="text-white font-semibold">{admin.name || "Admin"}</h4>
-              <p className="text-gray-200 text-sm">{admin.email || "admin@example.com"}</p>
-              <p className="text-gray-300 text-xs">Role: {admin.role || "user"}</p>
-            </div>
+            <Link to="AdminProfile" className="flex-1 ml-3 overflow-hidden">
+              <h4 className="text-white font-semibold truncate">{admin.name || "Admin Name"}</h4>
+              <p className="text-gray-200 text-sm truncate">{admin.email || "admin@example.com"}</p>
+              <p className="text-gray-300 text-xs truncate">Role: {admin.role || "Admin"}</p>
+            </Link>
           )}
         </div>
 
@@ -72,9 +84,7 @@ function Sidebar() {
         <div className="flex justify-end p-3">
           <i
             onClick={handleToggle}
-            className={`text-white fa-solid ${
-              isOpen ? "fa-chevron-left" : "fa-chevron-right"
-            } cursor-pointer hover:text-gray-300 transition-all duration-300`}
+            className={`text-white fa-solid ${isOpen ? "fa-chevron-left" : "fa-chevron-right"} cursor-pointer hover:text-gray-300 transition-all duration-300`}
           ></i>
         </div>
 
@@ -97,20 +107,19 @@ function Sidebar() {
             </NavLink>
           ))}
 
-          {/* Logout */}
+          {/* Log Out */}
           <div className="mt-auto border-t border-purple-600 pt-4 px-2">
-            <NavLink
-              to="/loginDash"
+            <button
               onClick={handleLogOut}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:bg-blue-800 hover:text-gray-200 transition-all"
+              className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-white hover:bg-blue-800 hover:text-gray-200 transition-all"
             >
               <SidenavList icon="fa-key" title={isOpen ? "Log Out" : null} />
-            </NavLink>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* Main Content */}
       <div
         className="flex-1 bg-gray-100 min-h-screen transition-all duration-300 p-10"
         style={{ marginLeft: isOpen ? "18%" : "6%" }}

@@ -1,82 +1,71 @@
-// controllers/adminController.js
-const AdminModel = require("../model/adminModel");
+const Admin = require("../model/adminModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+// Create Admin
 const createAdmin = async (req, res) => {
   try {
-    const { name, email, password, role, avatar } = req.body;
-    const exists = await AdminModel.findOne({ email });
+    const { name, email, password, adminSecret } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ error: "All fields required" });
+
+    const exists = await Admin.findOne({ email });
     if (exists) return res.status(400).json({ error: "Email already registered" });
 
-    const hashPassword = await bcrypt.hash(password, 10);
-    const newAdmin = new AdminModel({ name, email, password: hashPassword, role, avatar });
-    const savedAdmin = await newAdmin.save();
+    const role = adminSecret === process.env.ADMIN_SECRET ? "admin" : "user";
+    const hashed = await bcrypt.hash(password, 10);
 
-    res.status(201).json({
-      id: savedAdmin._id,
-      name: savedAdmin.name,
-      email: savedAdmin.email,
-      role: savedAdmin.role,
-      avatar: savedAdmin.avatar,
-    });
+    const admin = await Admin.create({ name, email, password: hashed, role });
+    res.status(201).json({ admin: { id: admin._id, name: admin.name, email: admin.email, role: admin.role } });
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error", details: err.message });
   }
 };
 
+// Admin login
 const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const admin = await AdminModel.findOne({ email });
+    const admin = await Admin.findOne({ email });
     if (!admin) return res.status(400).json({ error: "Invalid email" });
 
     const match = await bcrypt.compare(password, admin.password);
     if (!match) return res.status(401).json({ error: "Invalid password" });
 
-    const token = jwt.sign(
-      { id: admin._id, name: admin.name, email: admin.email, role: admin.role, avatar: admin.avatar },
-      process.env.JWT_SECRET,
-   
-    );
-
-    res.json({
-      message: "Login success",
-      admin: { id: admin._id, name: admin.name, email: admin.email, role: admin.role, avatar: admin.avatar },
-      token,
-    });
+    const token = jwt.sign({ id: admin._id, email: admin.email, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    res.json({ token, admin: { id: admin._id, name: admin.name, email: admin.email, role: admin.role, avatar: admin.avatar } });
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error", details: err.message });
   }
 };
 
+// Get Admin profile
 const getAdminProfile = async (req, res) => {
   try {
-    const adminId = req.admin.id;
-    const admin = await AdminModel.findById(adminId).select("-password");
+    const admin = await Admin.findOne();
     if (!admin) return res.status(404).json({ error: "Admin not found" });
     res.json(admin);
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error", details: err.message });
   }
 };
 
-// Ensure default admin
-const ensureDefaultAdmin = async () => {
+// Update Admin profile
+const updateAdminProfile = async (req, res) => {
   try {
-    const count = await AdminModel.countDocuments();
-    if (count > 0) return;
+    const { name, email, removeAvatar } = req.body;
+    const admin = await Admin.findOne();
+    if (!admin) return res.status(404).json({ error: "Admin not found" });
 
-    const name = process.env.DEFAULT_ADMIN_NAME || "Administrator";
-    const email = process.env.DEFAULT_ADMIN_EMAIL || "admin@example.com";
-    const passwordPlain = process.env.DEFAULT_ADMIN_PASSWORD || "admin1234";
-    const hashPassword = await bcrypt.hash(passwordPlain, 10);
+    admin.name = name || admin.name;
+    admin.email = email || admin.email;
+    if (req.file) admin.avatar = `/uploads/${req.file.filename}`;
+    else if (removeAvatar === "true") admin.avatar = "";
 
-    await AdminModel.create({ name, email, password: hashPassword, role: "admin" });
-    console.log("✅ Default admin ensured:", email);
+    await admin.save();
+    res.json(admin);
   } catch (err) {
-    console.error("ensureDefaultAdmin error:", err);
+    res.status(500).json({ error: "Failed to update profile", details: err.message });
   }
 };
 
-module.exports = { createAdmin, adminLogin, getAdminProfile, ensureDefaultAdmin };
+module.exports = { createAdmin, adminLogin, getAdminProfile, updateAdminProfile };

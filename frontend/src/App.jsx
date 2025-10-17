@@ -19,7 +19,8 @@ import OrdersPage from "./components/OrdersPage";
 import ReportsPage from "./components/ReportsPage";
 import SettingsPage from "./components/SettingsPage";
 import CategoryPage from "./components/category";
-import AdminRegistration from "./components/adminRegetration";
+import AdminRegister from "./components/adminRegetration";
+import AdminProfile from "./components/AdminProfileUpdate";
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<AdminRegistration />} />
+        <Route path="/admin" element={<AdminRegister />} />
         <Route path="/CategoryPage" element={<CategoryPage />} />
         <Route path="/CartPage" element={<CartPage />} />
         <Route path="/register" element={<CustomerRegistrationForm />} />
@@ -46,6 +47,7 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="AdminProfile" element={<AdminProfile />} />
           <Route path="books" element={<BookTable />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="addOrder" element={<AddOrder />} />
