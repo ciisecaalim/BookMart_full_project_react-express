@@ -21,6 +21,7 @@ import SettingsPage from "./components/SettingsPage";
 import CategoryPage from "./components/category";
 import AdminRegister from "./components/adminRegetration";
 import AdminProfile from "./components/AdminProfileUpdate";
+import AboutUs from "./components/about";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
+        <Route path="/AboutUs" element={<AboutUs />} />
         <Route path="/admin" element={<AdminRegister />} />
         <Route path="/CategoryPage" element={<CategoryPage />} />
         <Route path="/CartPage" element={<CartPage />} />

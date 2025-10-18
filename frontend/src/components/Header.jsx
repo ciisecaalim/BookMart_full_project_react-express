@@ -41,7 +41,7 @@ function HeaderBookStore() {
           {[
             { name: "Home", link: "/" },
             { name: "Categories", link: "/CategoryPage" },
-            { name: "About", link: "/bestsellers" },
+            { name: "About", link: "/AboutUs" },
             { name: "Contact", link: "/contact" },
           ].map((item) => (
             <Link
