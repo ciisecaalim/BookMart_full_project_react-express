@@ -4,7 +4,7 @@ const { createAdmin, adminLogin, getAdminProfile, updateAdminProfile } = require
 
 const router = express.Router();
 
-// Multer setup for avatar
+// Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
-router.post("/register", createAdmin); // ✅ Halkan waa route register
+router.post("/register", createAdmin);
 router.post("/login", adminLogin);
 router.get("/profile/public", getAdminProfile);
 router.put("/profile/public", upload.single("avatar"), updateAdminProfile);

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // <-- Import SweetAlert2
-import 'sweetalert2/dist/sweetalert2.min.css';
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
 function LoginDash() {
   const [email, setEmail] = useState("");
@@ -12,50 +12,45 @@ function LoginDash() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await axios.post("http://localhost:3000/api/users/login", {
-        email,
-        password,
+    if (!email || !password) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Fields",
+        text: "Please enter email and password",
       });
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:3000/api/admin/login", { email, password });
 
       const user = res.data.user;
+      if (!user) throw new Error("No user returned from backend");
 
       if (user.role === "admin") {
-        // Haddii admin
-        localStorage.setItem("admin", JSON.stringify(res.data));
-        navigate("/dash"); // Redirect dashboard
+        localStorage.setItem("admin", JSON.stringify({ token: res.data.token, user }));
+        navigate("/dash");
       } else {
-        // Sweet alert for non-admin
         Swal.fire({
-          icon: 'error',
-          title: 'Access Denied',
-          text: 'Not allowed 👎',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'OK'
+          icon: "error",
+          title: "Access Denied",
+          text: "Not allowed 👎",
         });
       }
     } catch (err) {
       console.error(err);
-      // Sweet alert for login error
       Swal.fire({
-        icon: 'error',
-        title: 'Login Failed',
-        text: 'Email or password is incorrect ❌',
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Try Again'
+        icon: "error",
+        title: "Login Failed",
+        text: err.response?.data?.error || err.message || "Email or password is incorrect ❌",
       });
     }
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-10 rounded-lg shadow-lg space-y-6 w-96"
-      >
-        <h2 className="text-2xl font-bold text-center text-green-600">
-          Admin Login
-        </h2>
+      <form onSubmit={handleLogin} className="bg-white p-10 rounded-lg shadow-lg space-y-6 w-96">
+        <h2 className="text-2xl font-bold text-center text-green-600">Admin Login</h2>
 
         <input
           type="email"
@@ -65,6 +60,7 @@ function LoginDash() {
           className="w-full border rounded p-2"
           required
         />
+
         <input
           type="password"
           placeholder="Password"
