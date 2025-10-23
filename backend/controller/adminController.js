@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const createDefaultAdmin = async () => {
   const exists = await Admin.findOne({ role: "admin" });
   if (!exists) {
-    const hashed = await bcrypt.hash(process.env.DEFAULT_ADMIN_PASS, 10);
+    const hashed = await bcrypt.hash(process.env.DEFAULT_ADMIN_PASSWORD, 10);
     await Admin.create({
       name: "Default Admin",
       email: process.env.DEFAULT_ADMIN_EMAIL,
