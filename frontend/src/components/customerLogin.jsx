@@ -45,7 +45,7 @@ function CustomerLogin() {
           <button
             type="button"
             onClick={() => setActive("customer")}
-            className={`px-12 py-3 rounded-lg ${
+            className={`px-12 ml-24 py-3 rounded-lg ${
               active === "customer"
                 ? "bg-blue-500 text-white"
                 : "border border-black text-black"
@@ -54,7 +54,7 @@ function CustomerLogin() {
             Customer
           </button>
 
-          <button
+          {/* <button
             type="button"
             onClick={() => setActive("admin")}
             className={`px-12 py-3 rounded-lg ${
@@ -64,7 +64,7 @@ function CustomerLogin() {
             }`}
           >
             Admin
-          </button>
+          </button> */}
         </div>
 
         <h2 className="text-2xl font-bold text-center mb-4 text-orange-600">
