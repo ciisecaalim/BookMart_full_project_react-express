@@ -12,7 +12,7 @@ function AdminRegister() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3000/api/admin/register", {
+      const res = await axios.post("https://bookmart-backend-o98w.onrender.com/api/admin/register", {
         name: adminName,
         email,
         password,

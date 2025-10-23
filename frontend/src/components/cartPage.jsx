@@ -44,7 +44,7 @@ function CartPage() {
               cartItems.map(item => (
                 <div key={item._id} className="grid grid-cols-6 gap-4 items-center border-b pb-3">
                   <div className="col-span-2 flex items-center gap-4">
-                   <img src={`http://localhost:3000/allImg/${item.prImg}`} alt={item.name} className="w-20 h-20 object-cover rounded-lg"/>
+                   <img src={`https://bookmart-backend-o98w.onrender.com/allImg/${item.prImg}`} alt={item.name} className="w-20 h-20 object-cover rounded-lg"/>
                     <div>
                       <p className="font-semibold">{item.name}</p>
                       <p className="text-sm text-gray-500">{item.category}</p>

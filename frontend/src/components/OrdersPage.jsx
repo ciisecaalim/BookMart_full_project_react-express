@@ -20,7 +20,7 @@ function OrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/orders/read");
+        const res = await axios.get("https://bookmart-backend-o98w.onrender.com/api/orders/read");
         setOrders(res.data);
       } catch (err) {
         console.error(err);

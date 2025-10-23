@@ -11,7 +11,7 @@ function AdminProfile() {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/admin/profile/public");
+        const res = await axios.get("https://bookmart-backend-o98w.onrender.com/api/admin/profile/public");
         setAdmin(res.data);
       } catch (err) {
         console.error(err);
@@ -40,7 +40,7 @@ function AdminProfile() {
       if (avatarFile) formData.append("avatar", avatarFile);
       else if (removeAvatar) formData.append("removeAvatar", "true");
 
-      const res = await axios.put("http://localhost:3000/api/admin/profile/public", formData, {
+      const res = await axios.put("https://bookmart-backend-o98w.onrender.com/api/admin/profile/public", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

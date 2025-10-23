@@ -22,7 +22,7 @@ function LoginDash() {
     }
 
     try {
-      const res = await axios.post("http://localhost:3000/api/admin/login", { email, password });
+      const res = await axios.post("https://bookmart-backend-o98w.onrender.com/api/admin/login", { email, password });
 
       const user = res.data.user;
       if (!user) throw new Error("No user returned from backend");

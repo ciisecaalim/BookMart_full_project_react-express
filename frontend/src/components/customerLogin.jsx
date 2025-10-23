@@ -15,8 +15,8 @@ function CustomerLogin() {
 
     const url =
       active === "customer"
-        ? "http://localhost:3000/api/customers/login"
-        : "http://localhost:3000/api/admin/login";
+        ? "https://bookmart-backend-o98w.onrender.com/api/customers/login"
+        : "https://bookmart-backend-o98w.onrender.com/api/admin/login";
 
     const payload = { email: gmail, password };
 

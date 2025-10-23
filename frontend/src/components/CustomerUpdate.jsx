@@ -14,7 +14,7 @@ function CustomerUpdateForm() {
 
   function getAll() {
     axios
-      .get(`http://localhost:5000/read/customer/${params.id}`)
+      .get(`https://bookmart-backend-o98w.onrender.com/read/customer/${params.id}`)
       .then((res) => {
         const data = res.data[0];
         setCustomerName(data.customerName);
@@ -29,7 +29,7 @@ function CustomerUpdateForm() {
   }
 
   function updateCustomer () {
-  axios.put(`http://localhost:5000/update/customer/${params.id}`,{
+  axios.put(`https://bookmart-backend-o98w.onrender.com/update/customer/${params.id}`,{
     "customerName":customerName,
     "gmail":gmail,
     "phone":phone,
@@ -49,7 +49,7 @@ function CustomerUpdateForm() {
     e.preventDefault();
 
     axios
-      .put(`http://localhost:5000/update/customer/${params.id}`, {
+      .put(`https://bookmart-backend-o98w.onrender.com/update/customer/${params.id}`, {
         customerName,
         gmail,
         phone,

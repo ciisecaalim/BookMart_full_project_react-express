@@ -18,7 +18,7 @@ function BookTable() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(`http://localhost:3000/api/products/read/product`);
+      const res = await axios.post(`https://bookmart-backend-o98w.onrender.com/api/products/read/product`);
       setBooks(res.data);
     } catch (err) {
       setError("⚠️ Failed to load books. Please check your server.");

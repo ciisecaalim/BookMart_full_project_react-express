@@ -20,7 +20,7 @@ function BookCard() {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/products/categories");
+      const res = await axios.get("https://bookmart-backend-o98w.onrender.com/api/products/categories");
       setCategories(["All", ...res.data, "Other"]);
     } catch (err) {
       console.error(err);
@@ -31,7 +31,7 @@ function BookCard() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post("http://localhost:3000/api/products/read/product", { category });
+      const res = await axios.post("https://bookmart-backend-o98w.onrender.com/api/products/read/product", { category });
       let products = res.data || [];
       if (search.trim()) {
         const key = search.toLowerCase();

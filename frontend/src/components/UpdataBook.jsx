@@ -15,7 +15,7 @@ function UpdateBookForm() {
     const navigate = useNavigate();
 
     const handleSingleData = () => {
-        axios.get(`http://localhost:3000/api/products/read/singleproduct/${params.id}`).then((res) => {
+        axios.get(`https://bookmart-backend-o98w.onrender.com/api/products/read/singleproduct/${params.id}`).then((res) => {
             setName(res.data.name);
             setQuantity(res.data.quantity);
             setPrice(res.data.price);
@@ -35,7 +35,7 @@ function UpdateBookForm() {
             formData.append("img", img);
         }
 
-        axios.put(`http://localhost:3000/api/products/update/product/${params.id}`, formData)
+        axios.put(`https://bookmart-backend-o98w.onrender.com/api/products/update/product/${params.id}`, formData)
             .then(() => {
                 alert("Successfully updated");
                 navigate("/dash/books");

@@ -10,14 +10,14 @@ function CustomerTable() {
 
   const readAll = () => {
     axios
-      .get("http://localhost:3000/api/customers/read")
+      .get("https://bookmart-backend-o98w.onrender.com/api/customers/read")
       .then((res) => setCustomers(res.data))
       .catch(() => toast.error("Failed to fetch customers"));
   };
 
   const deleteCustomer = (id) => {
     axios
-      .delete(`http://localhost:3000/api/customers/delete/${id}`)
+      .delete(`https://bookmart-backend-o98w.onrender.com/api/customers/delete/${id}`)
       .then(() => {
         toast.success("Customer deleted successfully");
         readAll();

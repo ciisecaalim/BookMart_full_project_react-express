@@ -18,8 +18,8 @@ function CustomerRegistrationForm() {
 
     const url =
       active === "customer"
-        ? "http://localhost:3000/api/customers/create"
-        : "http://localhost:3000/api/admin/create";
+        ? "https://bookmart-backend-o98w.onrender.com/api/customers/create"
+        : "https://bookmart-backend-o98w.onrender.com/api/admin/create";
 
     const payload =
       active === "customer"

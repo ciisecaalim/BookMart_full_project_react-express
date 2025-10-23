@@ -27,7 +27,7 @@ function BookForm() {
       formData.append("img", img);
     }
 
-    axios.post("http://localhost:3000/api/products/create/product", formData)
+    axios.post("https://bookmart-backend-o98w.onrender.com/api/products/create/product", formData)
       .then(() => {
         toast.success("Success register", {
           position: "top-right",
